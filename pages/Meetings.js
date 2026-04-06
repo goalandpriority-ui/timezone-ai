@@ -9,6 +9,7 @@ Pressable
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
 
 export default function Meetings(){
 
@@ -21,6 +22,30 @@ const [start,setStart]=useState("")
 const [end,setEnd]=useState("")
 
 const [meetings,setMeetings]=useState([])
+
+/* NOTIFICATION PERMISSION */
+useEffect(()=>{
+Notifications.requestPermissionsAsync()
+},[])
+
+/* SCHEDULE NOTIFICATION */
+const scheduleNotification = async (date,start)=>{
+
+try{
+
+const trigger=new Date(`${date} ${start}`)
+
+await Notifications.scheduleNotificationAsync({
+content:{
+title:"Meeting Reminder",
+body:`Meeting at ${start}`
+},
+trigger
+})
+
+}catch(e){}
+
+}
 
 /* CLEAN EXPIRED */
 const cleanExpired = (list)=>{
@@ -132,6 +157,8 @@ end,
 duration
 }
 
+scheduleNotification(date,start)
+
 const list=[item,...meetings]
 
 saveAll(list)
@@ -160,7 +187,6 @@ marginBottom:15
 Meeting Alerts
 </Text>
 
-{/* DATE */}
 <Text style={{color:"#94a3b8"}}>Date</Text>
 
 <TextInput
@@ -177,7 +203,6 @@ marginTop:5
 }}
 />
 
-{/* TIME */}
 <Text style={{
 color:"#94a3b8",
 marginTop:10
@@ -226,7 +251,6 @@ marginTop:5
 
 </View>
 
-{/* DURATION */}
 <Text style={{
 color:"#94a3b8",
 marginTop:10
@@ -247,7 +271,6 @@ marginTop:5
 }}
 />
 
-{/* AUTO */}
 <View style={{
 backgroundColor:"#0f172a",
 padding:14,
@@ -265,7 +288,6 @@ End: {end}
 
 </View>
 
-{/* SAVE */}
 <TouchableOpacity
 onPress={saveMeeting}
 style={{
@@ -284,7 +306,6 @@ Save Meeting
 </Text>
 </TouchableOpacity>
 
-{/* LIST */}
 <FlatList
 data={meetings}
 keyExtractor={(i)=>i.id}
@@ -317,4 +338,4 @@ marginTop:10
 
 </View>
 )
-  }
+}
