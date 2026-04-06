@@ -189,13 +189,10 @@ setMyZone(zone)
 
 /* LOCATION DETECT */
 useEffect(()=>{
-
 const detect=async()=>{
-
 try{
 const {status}=await Location.requestForegroundPermissionsAsync()
 if(status!=="granted") return
-
 const loc=await Location.getCurrentPositionAsync({})
 const geo=await Location.reverseGeocodeAsync(loc.coords)
 
@@ -205,32 +202,24 @@ setCountry(geo[0].country || "")
 }
 
 }catch(e){}
-
 }
-
 detect()
-
 },[])
 
 /* LIVE CLOCK */
 useEffect(()=>{
-
 const update=()=>{
 const now=new Date()
-
 const t=now.toLocaleTimeString("en-US",{
 hour:"2-digit",
 minute:"2-digit",
 second:"2-digit"
 })
-
 setLiveTime(t)
 }
-
 update()
 const i=setInterval(update,1000)
 return ()=>clearInterval(i)
-
 },[])
 
 const normalize = (text)=>{
@@ -306,8 +295,8 @@ return(
 
 <Text style={{
 color:"#fff",
-fontSize:26,
-fontWeight:"bold"
+fontSize:28,
+fontWeight:"700"
 }}>
 TimeZone AI
 </Text>
@@ -324,26 +313,30 @@ TimeZone AI
 
 <Text style={{
 color:"#94a3b8",
-marginBottom:10
+marginBottom:15
 }}>
 Your Timezone: {myZone}
 </Text>
 
+<View style={{
+backgroundColor:"#0f172a",
+borderRadius:16,
+padding:16,
+marginBottom:12
+}}>
+<Text style={{color:"#94a3b8",marginBottom:6}}>From</Text>
+
 <TextInput
-placeholder="From city / country"
-placeholderTextColor="#94a3b8"
+placeholder="City or country"
+placeholderTextColor="#64748b"
 value={from}
 onChangeText={(t)=>{
 setFrom(t)
 filterCities(t,setFromSug)
 }}
-style={{
-backgroundColor:"#0f172a",
-color:"#fff",
-padding:15,
-borderRadius:10
-}}
+style={{color:"#fff",fontSize:16}}
 />
+</View>
 
 {fromSug.length > 0 && (
 <FlatList
@@ -355,11 +348,7 @@ onPress={()=>{
 setFrom(item)
 setFromSug([])
 }}
-style={{
-padding:10,
-borderBottomWidth:1,
-borderBottomColor:"#1e293b"
-}}>
+style={{padding:12}}>
 <Text style={{color:"#fff"}}>
 {getFlag(item)} {item}
 </Text>
@@ -371,32 +360,35 @@ borderBottomColor:"#1e293b"
 <TouchableOpacity
 onPress={swap}
 style={{
-backgroundColor:"#1e293b",
-padding:12,
-borderRadius:10,
-marginTop:10,
-marginBottom:10
+backgroundColor:"#0f172a",
+padding:14,
+borderRadius:16,
+alignItems:"center",
+marginBottom:12
 }}>
-<Text style={{color:"#fff",textAlign:"center"}}>
-🔁 Swap
+<Text style={{color:"#fff"}}>
+Swap
 </Text>
 </TouchableOpacity>
 
+<View style={{
+backgroundColor:"#0f172a",
+borderRadius:16,
+padding:16
+}}>
+<Text style={{color:"#94a3b8",marginBottom:6}}>To</Text>
+
 <TextInput
-placeholder="To city / country"
-placeholderTextColor="#94a3b8"
+placeholder="City or country"
+placeholderTextColor="#64748b"
 value={to}
 onChangeText={(t)=>{
 setTo(t)
 filterCities(t,setToSug)
 }}
-style={{
-backgroundColor:"#0f172a",
-color:"#fff",
-padding:15,
-borderRadius:10
-}}
+style={{color:"#fff",fontSize:16}}
 />
+</View>
 
 {toSug.length > 0 && (
 <FlatList
@@ -408,11 +400,7 @@ onPress={()=>{
 setTo(item)
 setToSug([])
 }}
-style={{
-padding:10,
-borderBottomWidth:1,
-borderBottomColor:"#1e293b"
-}}>
+style={{padding:12}}>
 <Text style={{color:"#fff"}}>
 {getFlag(item)} {item}
 </Text>
@@ -421,14 +409,22 @@ borderBottomColor:"#1e293b"
 />
 )}
 
+<View style={{
+backgroundColor:"#0f172a",
+borderRadius:18,
+padding:20,
+marginTop:20
+}}>
 <Text style={{
 color:"#22c55e",
-marginTop:20,
-fontSize:18
+fontSize:18,
+textAlign:"center",
+fontWeight:"600"
 }}>
 {result}
 </Text>
+</View>
 
 </View>
 )
-  }
+}
