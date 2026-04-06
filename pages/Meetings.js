@@ -10,6 +10,7 @@ Pressable
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
+import BannerAd from "../components/BannerAd";
 
 export default function Meetings(){
 
@@ -336,6 +337,9 @@ marginTop:10
 )}
 />
 
+{/* BANNER AD */}
+<BannerAd/>
+
 </View>
 )
-}
+  }
