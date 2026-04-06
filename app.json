@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "TimeZone AI",
+    "slug": "timezone-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#020617"
+    },
+    "android": {
+      "package": "com.timezoneai.worldtime"
+    }
+  }
+}
