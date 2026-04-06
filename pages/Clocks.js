@@ -86,7 +86,7 @@ if(hr<9 || hr>18) ok=false
 })
 
 if(ok){
-setBestTime("${h}:00")
+setBestTime(`${h}:00`)
 return
 }
 
