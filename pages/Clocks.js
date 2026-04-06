@@ -3,10 +3,10 @@ import {
 View,
 Text,
 TouchableOpacity,
-FlatList,
 Pressable,
 TextInput,
-Share
+Share,
+ScrollView
 } from "react-native";
 
 /* FLAGS */
@@ -51,7 +51,10 @@ const [bestTime,setBestTime]=useState("")
 /* CLOCK */
 const getClock=(zone)=>{
 return new Date().toLocaleTimeString("en-US",{
-timeZone:zone
+timeZone:zone,
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
 })
 }
 
@@ -105,29 +108,38 @@ favorites.forEach(f=>{
 const t=new Date().toLocaleTimeString("en-US",{
 timeZone:zones[f]
 })
-text+="${f} ${t}\n"
+text+=`${f} ${t}\n`
 })
 
 await Share.share({message:text})
 }
 
 return(
-<View style={{flex:1,backgroundColor:"#020617",padding:20}}>
+<ScrollView style={{flex:1,backgroundColor:"#020617"}} contentContainerStyle={{padding:20}}>
 
 <Text style={{
 color:"#fff",
-fontSize:24,
-fontWeight:"bold",
-marginBottom:10
+fontSize:28,
+fontWeight:"700",
+marginBottom:15
 }}>
 Clocks & Meeting
 </Text>
 
 {/* QUICK ADD */}
 <View style={{
+backgroundColor:"#0f172a",
+borderRadius:16,
+padding:16,
+marginBottom:15
+}}>
+<Text style={{color:"#94a3b8",marginBottom:10}}>
+Quick Add
+</Text>
+
+<View style={{
 flexDirection:"row",
-flexWrap:"wrap",
-marginBottom:10
+flexWrap:"wrap"
 }}>
 
 {Object.keys(zones).map(c=>(
@@ -135,12 +147,12 @@ marginBottom:10
 key={c}
 onPress={()=>setFavorites([c,...favorites])}
 style={{
-backgroundColor:"#1e293b",
+backgroundColor:"#020617",
 paddingHorizontal:12,
-paddingVertical:6,
+paddingVertical:8,
 borderRadius:20,
-marginRight:6,
-marginBottom:6
+marginRight:8,
+marginBottom:8
 }}>
 <Text style={{color:"#fff"}}>
 {getFlag(c)} {c}
@@ -148,10 +160,20 @@ marginBottom:6
 </TouchableOpacity>
 ))}
 
-</View>{/* PINNED */}
+</View>
+</View>
+
+{/* PINNED */}
 {pinned.length>0 && (
-<View>
-<Text style={{color:"#22c55e"}}>📌 Pinned</Text>
+<View style={{
+backgroundColor:"#0f172a",
+borderRadius:16,
+padding:16,
+marginBottom:15
+}}>
+<Text style={{color:"#94a3b8",marginBottom:10}}>
+Pinned
+</Text>
 
 {pinned.map(p=>(
 <Pressable
@@ -160,10 +182,10 @@ onLongPress={()=>unpin(p)}
 style={{
 flexDirection:"row",
 justifyContent:"space-between",
-backgroundColor:"#0f172a",
-padding:12,
-borderRadius:10,
-marginTop:5
+backgroundColor:"#020617",
+padding:14,
+borderRadius:12,
+marginBottom:8
 }}>
 <Text style={{color:"#fff"}}>
 {getFlag(p)} {p}
@@ -174,10 +196,21 @@ marginTop:5
 </Text>
 
 </Pressable>
-))}</View>
-)}{/* WORLD CLOCK */}
-<View style={{marginTop:10}}>
-<Text style={{color:"#22c55e"}}>🕓 World Clock</Text>
+))}
+
+</View>
+)}
+
+{/* WORLD CLOCK */}
+<View style={{
+backgroundColor:"#0f172a",
+borderRadius:16,
+padding:16,
+marginBottom:15
+}}>
+<Text style={{color:"#94a3b8",marginBottom:10}}>
+World Clock
+</Text>
 
 {favorites.map(f=>(
 <Pressable
@@ -186,10 +219,10 @@ onLongPress={()=>pin(f)}
 style={{
 flexDirection:"row",
 justifyContent:"space-between",
-backgroundColor:"#0f172a",
-padding:12,
-borderRadius:10,
-marginTop:5
+backgroundColor:"#020617",
+padding:14,
+borderRadius:12,
+marginBottom:8
 }}>
 <Text style={{color:"#fff"}}>
 {getFlag(f)} {f}
@@ -200,42 +233,57 @@ marginTop:5
 </Text>
 
 </Pressable>
-))}</View>{/* MEETING */}
-<View style={{marginTop:15}}>
+))}
 
-<Text style={{color:"#22c55e"}}>
-📅 Meeting Planner
+</View>
+
+{/* MEETING */}
+<View style={{
+backgroundColor:"#0f172a",
+borderRadius:16,
+padding:16
+}}>
+<Text style={{color:"#94a3b8",marginBottom:10}}>
+Meeting Planner
 </Text>
 
 <TextInput
 value={meetingTime}
 onChangeText={setMeetingTime}
 style={{
-backgroundColor:"#0f172a",
+backgroundColor:"#020617",
 color:"#fff",
-padding:10,
-borderRadius:10,
-marginTop:5
+padding:14,
+borderRadius:12,
+marginBottom:10
 }}
 />
 
-<Text style={{color:"#94a3b8"}}>
-🤖 Best: {bestTime}
+<Text style={{
+color:"#22c55e",
+marginBottom:10
+}}>
+Best time: {bestTime}
 </Text>
 
 <TouchableOpacity
 onPress={shareMeeting}
 style={{
-backgroundColor:"#2563eb",
-padding:10,
-borderRadius:10,
-marginTop:5
+backgroundColor:"#22c55e",
+padding:14,
+borderRadius:12
 }}>
-<Text style={{color:"#fff",textAlign:"center"}}>
-Share
+<Text style={{
+color:"#020617",
+textAlign:"center",
+fontWeight:"600"
+}}>
+Share Meeting
 </Text>
 </TouchableOpacity>
 
-</View></View>
+</View>
+
+</ScrollView>
 )
 }
