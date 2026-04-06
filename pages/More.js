@@ -26,41 +26,50 @@ contentContainerStyle={{padding:20}}
 
 <Text style={{
 color:"#fff",
-fontSize:26,
-fontWeight:"bold",
-marginBottom:15
+fontSize:28,
+fontWeight:"700",
+marginBottom:16
 }}>
-⚙ More
+More
 </Text>
 
+{/* INFO CARD */}
 <View style={{
 backgroundColor:"#0f172a",
-padding:16,
-borderRadius:12,
-marginBottom:12
+padding:18,
+borderRadius:16,
+marginBottom:14
 }}>
 
 <Text style={{
-color:"#22c55e",
-fontSize:18,
+color:"#94a3b8",
 marginBottom:8
 }}>
 Info
 </Text>
 
-<Text style={{color:"#fff",fontSize:16}}>
+<Text style={{
+color:"#fff",
+fontSize:18,
+fontWeight:"600"
+}}>
 TimeZone AI
 </Text>
 
-<Text style={{color:"#94a3b8",marginTop:2}}>
+<Text style={{
+color:"#94a3b8",
+marginTop:4
+}}>
 Convert • Clocks • Meeting
 </Text>
 
-<Text style={{color:"#94a3b8",marginTop:10}}>
-Supports:
+<View style={{marginTop:14}}>
+
+<Text style={{color:"#94a3b8"}}>
+Supports
 </Text>
 
-<Text style={{color:"#fff"}}>
+<Text style={{color:"#fff",marginTop:4}}>
 200+ Countries
 </Text>
 
@@ -72,43 +81,56 @@ Supports:
 Offline support
 </Text>
 
-<Text style={{color:"#94a3b8",marginTop:10}}>
+</View>
+
+<Text style={{
+color:"#94a3b8",
+marginTop:14
+}}>
 Version 1.0.0
 </Text>
 
 </View>
 
+{/* DEVELOPER CARD */}
 <View style={{
 backgroundColor:"#0f172a",
-padding:16,
-borderRadius:12,
-marginBottom:12
+padding:18,
+borderRadius:16,
+marginBottom:14
 }}>
+
 <Text style={{
-color:"#22c55e",
-fontSize:18,
+color:"#94a3b8",
 marginBottom:6
 }}>
 Developer
 </Text>
 
-<Text style={{color:"#fff"}}>
+<Text style={{
+color:"#fff",
+fontSize:16,
+fontWeight:"600"
+}}>
 Ajithkumar Eswaran
 </Text>
+
 </View>
 
+{/* GITHUB BUTTON */}
 <TouchableOpacity
 onPress={openGithub}
 style={{
-backgroundColor:"#2563eb",
-padding:14,
-borderRadius:12
+backgroundColor:"#0f172a",
+padding:16,
+borderRadius:16
 }}
 >
 <Text style={{
-color:"#fff",
+color:"#22c55e",
 textAlign:"center",
-fontWeight:"600"
+fontWeight:"600",
+fontSize:16
 }}>
 Open GitHub Repository
 </Text>
