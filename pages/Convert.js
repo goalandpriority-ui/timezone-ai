@@ -9,6 +9,7 @@ Pressable
 } from "react-native";
 
 import * as Location from "expo-location";
+import BannerAdComponent from "./BannerAd";
 
 /* AI aliases */
 const aliases = {
@@ -156,7 +157,6 @@ String.fromCodePoint(127397 + char.charCodeAt())
 )
 }
 
-/* ALL TIMEZONES */
 const allZones = Intl.supportedValuesOf
 ? Intl.supportedValuesOf("timeZone")
 : [];
@@ -181,13 +181,11 @@ const [liveTime,setLiveTime]=useState("")
 const [fromSug,setFromSug]=useState([])
 const [toSug,setToSug]=useState([])
 
-/* AUTO DETECT TIMEZONE */
 useEffect(()=>{
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone
 setMyZone(zone)
 },[])
 
-/* LOCATION DETECT */
 useEffect(()=>{
 const detect=async()=>{
 try{
@@ -206,7 +204,6 @@ setCountry(geo[0].country || "")
 detect()
 },[])
 
-/* LIVE CLOCK */
 useEffect(()=>{
 const update=()=>{
 const now=new Date()
@@ -246,9 +243,7 @@ const filtered=cities.filter(c => c.includes(t))
 setter(filtered.slice(0,8))
 }
 
-/* CONVERT */
 const convert=()=>{
-
 const fromZone=getTimezone(from) || myZone
 const toZone=getTimezone(to)
 
@@ -276,14 +271,12 @@ second:"2-digit"
 setResult(`${from} ${fromTime} → ${to} ${toTime}`)
 }
 
-/* LIVE */
 useEffect(()=>{
 convert()
 const i=setInterval(convert,1000)
 return ()=>clearInterval(i)
 },[from,to,myZone])
 
-/* SWAP */
 const swap=()=>{
 const a=from
 setFrom(to)
@@ -424,6 +417,9 @@ fontWeight:"600"
 {result}
 </Text>
 </View>
+
+{/* ADS */}
+<BannerAdComponent/>
 
 </View>
 )
