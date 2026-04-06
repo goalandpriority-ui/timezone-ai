@@ -7,7 +7,7 @@ Linking,
 ScrollView
 } from "react-native";
 
-export default function More(){
+export default function More({dark,setDark}){
 
 const openGithub = ()=>{
 Linking.openURL(
@@ -19,13 +19,13 @@ return(
 <ScrollView
 style={{
 flex:1,
-backgroundColor:"#020617"
+backgroundColor: dark ? "#020617" : "#f8fafc"
 }}
 contentContainerStyle={{padding:20}}
 >
 
 <Text style={{
-color:"#fff",
+color: dark ? "#fff" : "#000",
 fontSize:28,
 fontWeight:"700",
 marginBottom:16
@@ -33,7 +33,6 @@ marginBottom:16
 More
 </Text>
 
-{/* INFO CARD */}
 <View style={{
 backgroundColor:"#0f172a",
 padding:18,
@@ -41,10 +40,7 @@ borderRadius:16,
 marginBottom:14
 }}>
 
-<Text style={{
-color:"#94a3b8",
-marginBottom:8
-}}>
+<Text style={{color:"#94a3b8",marginBottom:8}}>
 Info
 </Text>
 
@@ -60,7 +56,7 @@ TimeZone AI
 color:"#94a3b8",
 marginTop:4
 }}>
-Convert • Clocks • Meeting
+Convert • Date • Meetings • Currency
 </Text>
 
 <View style={{marginTop:14}}>
@@ -92,7 +88,6 @@ Version 1.0.0
 
 </View>
 
-{/* DEVELOPER CARD */}
 <View style={{
 backgroundColor:"#0f172a",
 padding:18,
@@ -117,7 +112,25 @@ Ajithkumar Eswaran
 
 </View>
 
-{/* GITHUB BUTTON */}
+<TouchableOpacity
+onPress={()=>setDark(!dark)}
+style={{
+backgroundColor:"#0f172a",
+padding:16,
+borderRadius:16,
+marginBottom:14
+}}
+>
+<Text style={{
+color:"#22c55e",
+textAlign:"center",
+fontWeight:"600",
+fontSize:16
+}}>
+🌙 Toggle Theme
+</Text>
+</TouchableOpacity>
+
 <TouchableOpacity
 onPress={openGithub}
 style={{
@@ -138,4 +151,4 @@ Open GitHub Repository
 
 </ScrollView>
 )
-}
+  }
