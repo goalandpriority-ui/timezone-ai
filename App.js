@@ -7,7 +7,8 @@ TouchableOpacity
 
 import Convert from "./pages/Convert";
 import Currency from "./pages/Currency";
-import Clocks from "./pages/Clocks";
+import DateConvert from "./pages/DateConvert";
+import Meetings from "./pages/Meetings";
 import More from "./pages/More";
 
 export default function App(){
@@ -29,7 +30,7 @@ page===id ? "#22c55e" : "transparent"
 color: page===id ? "#22c55e" : "#94a3b8",
 textAlign:"center",
 fontWeight:"600",
-fontSize:14
+fontSize:13
 }}>
 {label}
 </Text>
@@ -39,7 +40,7 @@ fontSize:14
 return(
 <View style={{flex:1,backgroundColor:"#020617"}}>
 
-{/* TOP NAVBAR */}
+{/* NAVBAR */}
 <View
 style={{
 flexDirection:"row",
@@ -50,18 +51,20 @@ borderBottomColor:"#1e293b"
 >
 
 <Tab id="convert" label="🌍 Convert" />
+<Tab id="date" label="📅 Date" />
+<Tab id="meetings" label="⏰ Meetings" />
 <Tab id="currency" label="💱 Currency" />
-<Tab id="clocks" label="🕓 Clocks" />
 <Tab id="more" label="⚙ More" />
 
 </View>
 
 {/* PAGES */}
 {page==="convert" && <Convert/>}
+{page==="date" && <DateConvert/>}
+{page==="meetings" && <Meetings/>}
 {page==="currency" && <Currency/>}
-{page==="clocks" && <Clocks/>}
 {page==="more" && <More/>}
 
 </View>
 )
-}
+  }
