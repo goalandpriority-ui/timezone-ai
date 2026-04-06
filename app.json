@@ -8,8 +8,15 @@
     "platforms": ["android"],
     "android": {
       "package": "com.timezone.ai",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": []
     },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "extra": {
       "eas": {
         "projectId": "8eebc72f-263a-498b-9526-ab6b64d328da"
