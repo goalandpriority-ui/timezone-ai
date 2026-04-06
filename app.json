@@ -9,8 +9,15 @@
       "package": "com.timezone.ai",
       "versionCode": 1,
       "targetSdkVersion": 34,
-      "minSdkVersion": 23
+      "minSdkVersion": 23,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
+    "plugins": [
+      "expo-location"
+    ],
     "extra": {
       "eas": {
         "projectId": "8eebc72f-263a-498b-9526-ab6b64d328da"
