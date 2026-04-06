@@ -14,6 +14,9 @@ import More from "./pages/More";
 export default function App(){
 
 const [page,setPage]=useState("convert")
+const [dark,setDark]=useState(true)
+
+const bg = dark ? "#020617" : "#f8fafc"
 
 const Tab = ({id,label})=>(
 <TouchableOpacity
@@ -38,13 +41,12 @@ fontSize:13
 )
 
 return(
-<View style={{flex:1,backgroundColor:"#020617"}}>
+<View style={{flex:1,backgroundColor:bg}}>
 
-{/* NAVBAR */}
 <View
 style={{
 flexDirection:"row",
-backgroundColor:"#020617",
+backgroundColor:bg,
 borderBottomWidth:1,
 borderBottomColor:"#1e293b"
 }}
@@ -58,12 +60,11 @@ borderBottomColor:"#1e293b"
 
 </View>
 
-{/* PAGES */}
-{page==="convert" && <Convert/>}
-{page==="date" && <DateConvert/>}
-{page==="meetings" && <Meetings/>}
-{page==="currency" && <Currency/>}
-{page==="more" && <More/>}
+{page==="convert" && <Convert dark={dark}/>}
+{page==="date" && <DateConvert dark={dark}/>}
+{page==="meetings" && <Meetings dark={dark}/>}
+{page==="currency" && <Currency dark={dark}/>}
+{page==="more" && <More dark={dark} setDark={setDark}/>}
 
 </View>
 )
