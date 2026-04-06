@@ -8,6 +8,8 @@ FlatList,
 Pressable
 } from "react-native";
 
+import BannerAd from "../components/BannerAd";
+
 /* TIMEZONES */
 const zones = Intl.supportedValuesOf
 ? Intl.supportedValuesOf("timeZone")
@@ -217,7 +219,6 @@ marginTop:5
 }}
 />
 
-{/* AM PM */}
 <TouchableOpacity
 onPress={()=>setAmpm("AM")}
 style={{
@@ -327,9 +328,11 @@ marginTop:5
 }}>
 {result}
 </Text>
-
 </View>
+
+{/* BANNER AD */}
+<BannerAd/>
 
 </View>
 )
-             }
+}
