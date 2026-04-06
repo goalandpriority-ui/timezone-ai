@@ -8,6 +8,22 @@ FlatList,
 Pressable
 } from "react-native";
 
+/* AI aliases */
+const aliases = {
+america: "new york",
+usa: "new york",
+us: "new york",
+uk: "london",
+england: "london",
+uae: "dubai",
+emirates: "dubai",
+japan: "tokyo",
+australia: "sydney",
+france: "paris",
+germany: "berlin"
+};
+
+/* COMMON CITIES (your old list intact) */
 const timezones = {
 india: "Asia/Kolkata",
 london: "Europe/London",
@@ -26,50 +42,66 @@ chicago: "America/Chicago",
 toronto: "America/Toronto"
 };
 
-/* AI aliases */
-const aliases = {
-america: "new york",
-usa: "new york",
-us: "new york",
-uk: "london",
-england: "london",
-uae: "dubai",
-emirates: "dubai",
-japan: "tokyo",
-australia: "sydney",
-france: "paris",
-germany: "berlin"
-};
+/* 🌍 ALL TIMEZONES */
+const allZones = Intl.supportedValuesOf
+? Intl.supportedValuesOf("timeZone")
+: [];
 
-const cities = Object.keys(timezones);
+const cities = [
+...Object.keys(timezones),
+...allZones.map(z => z.toLowerCase())
+];
 
 export default function App(){
 
 const [from,setFrom]=useState("")
 const [to,setTo]=useState("")
 const [result,setResult]=useState("")
+const [myZone,setMyZone]=useState("")
 
 const [fromSug,setFromSug]=useState([])
 const [toSug,setToSug]=useState([])
+
+/* AUTO DETECT USER TIMEZONE */
+useEffect(()=>{
+const zone=Intl.DateTimeFormat().resolvedOptions().timeZone
+setMyZone(zone)
+},[])
 
 const normalize = (text)=>{
 const t = text.toLowerCase().trim()
 return aliases[t] || t
 }
 
+const getTimezone = (value)=>{
+const key = normalize(value)
+
+if(timezones[key]) return timezones[key]
+
+const match = allZones.find(z =>
+z.toLowerCase().includes(key)
+)
+
+return match
+}
+
 const filterCities=(text,setter)=>{
 const t=text.toLowerCase()
-const filtered=cities.filter(c=>c.includes(t))
-setter(filtered.slice(0,5))
+
+const filtered=cities.filter(c =>
+c.includes(t)
+)
+
+setter(filtered.slice(0,8))
 }
 
 /* CONVERT */
 const convert=()=>{
 
-const fromKey=normalize(from)
-const toKey=normalize(to)
+const fromZone=getTimezone(from) || myZone
+const toZone=getTimezone(to)
 
-if(!timezones[fromKey] || !timezones[toKey]){
+if(!fromZone || !toZone){
 setResult("City not supported yet")
 return
 }
@@ -77,20 +109,20 @@ return
 const now=new Date()
 
 const fromTime=now.toLocaleString("en-US",{
-timeZone:timezones[fromKey],
+timeZone:fromZone,
 hour:"2-digit",
 minute:"2-digit",
 second:"2-digit"
 })
 
 const toTime=now.toLocaleString("en-US",{
-timeZone:timezones[toKey],
+timeZone:toZone,
 hour:"2-digit",
 minute:"2-digit",
 second:"2-digit"
 })
 
-setResult(`${fromKey} ${fromTime} → ${toKey} ${toTime}`)
+setResult(`${from} ${fromTime} → ${to} ${toTime}`)
 }
 
 /* LIVE CLOCK */
@@ -98,7 +130,7 @@ useEffect(()=>{
 convert()
 const i=setInterval(convert,1000)
 return ()=>clearInterval(i)
-},[from,to])
+},[from,to,myZone])
 
 /* SWAP */
 const swap=()=>{
@@ -119,9 +151,16 @@ justifyContent:"center"
 color:"#fff",
 fontSize:26,
 fontWeight:"bold",
-marginBottom:20
+marginBottom:5
 }}>
 TimeZone AI
+</Text>
+
+<Text style={{
+color:"#94a3b8",
+marginBottom:15
+}}>
+Your Timezone: {myZone}
 </Text>
 
 <TextInput
@@ -142,6 +181,7 @@ borderRadius:10
 
 <FlatList
 data={fromSug}
+keyExtractor={(i)=>i}
 renderItem={({item})=>(
 <Pressable
 onPress={()=>{
@@ -159,7 +199,6 @@ borderBottomColor:"#1e293b"
 )}
 />
 
-{/* SWAP BUTTON */}
 <TouchableOpacity
 onPress={swap}
 style={{
@@ -187,13 +226,13 @@ style={{
 backgroundColor:"#0f172a",
 color:"#fff",
 padding:15,
-borderRadius:10,
-marginTop:10
+borderRadius:10
 }}
 />
 
 <FlatList
 data={toSug}
+keyExtractor={(i)=>i}
 renderItem={({item})=>(
 <Pressable
 onPress={()=>{
@@ -211,32 +250,14 @@ borderBottomColor:"#1e293b"
 )}
 />
 
-<TouchableOpacity
-onPress={convert}
-style={{
-backgroundColor:"#2563eb",
-padding:15,
-borderRadius:10,
-marginTop:20
-}}
->
-<Text style={{
-color:"#fff",
-textAlign:"center",
-fontWeight:"bold"
-}}>
-Convert
-</Text>
-</TouchableOpacity>
-
 <Text style={{
 color:"#22c55e",
 marginTop:20,
-fontSize:16
+fontSize:18
 }}>
 {result}
 </Text>
 
 </View>
 )
-}
+  }
