@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 View,
 Text,
@@ -63,6 +63,7 @@ const filtered=cities.filter(c=>c.includes(t))
 setter(filtered.slice(0,5))
 }
 
+/* CONVERT */
 const convert=()=>{
 
 const fromKey=normalize(from)
@@ -78,16 +79,32 @@ const now=new Date()
 const fromTime=now.toLocaleString("en-US",{
 timeZone:timezones[fromKey],
 hour:"2-digit",
-minute:"2-digit"
+minute:"2-digit",
+second:"2-digit"
 })
 
 const toTime=now.toLocaleString("en-US",{
 timeZone:timezones[toKey],
 hour:"2-digit",
-minute:"2-digit"
+minute:"2-digit",
+second:"2-digit"
 })
 
 setResult(`${fromKey} ${fromTime} → ${toKey} ${toTime}`)
+}
+
+/* LIVE CLOCK */
+useEffect(()=>{
+convert()
+const i=setInterval(convert,1000)
+return ()=>clearInterval(i)
+},[from,to])
+
+/* SWAP */
+const swap=()=>{
+const a=from
+setFrom(to)
+setTo(a)
 }
 
 return(
@@ -141,6 +158,22 @@ borderBottomColor:"#1e293b"
 </Pressable>
 )}
 />
+
+{/* SWAP BUTTON */}
+<TouchableOpacity
+onPress={swap}
+style={{
+backgroundColor:"#1e293b",
+padding:10,
+borderRadius:10,
+marginTop:10,
+marginBottom:10
+}}
+>
+<Text style={{color:"#fff",textAlign:"center"}}>
+🔁 Swap
+</Text>
+</TouchableOpacity>
 
 <TextInput
 placeholder="To city / country"
@@ -206,4 +239,4 @@ fontSize:16
 
 </View>
 )
-  }
+}
