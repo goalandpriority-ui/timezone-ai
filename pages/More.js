@@ -22,8 +22,7 @@ flex:1,
 backgroundColor:"#020617"
 }}
 contentContainerStyle={{padding:20}}
-
-«»
+>
 
 <Text style={{
 color:"#fff",
@@ -34,7 +33,6 @@ marginBottom:15
 ⚙ More
 </Text>
 
-{/* INFO */}
 <View style={{
 backgroundColor:"#0f172a",
 padding:16,
@@ -47,7 +45,7 @@ color:"#22c55e",
 fontSize:18,
 marginBottom:8
 }}>
-ℹ️ Info
+Info
 </Text>
 
 <Text style={{color:"#fff",fontSize:16}}>
@@ -78,7 +76,8 @@ Offline support
 Version 1.0.0
 </Text>
 
-</View>{/* DEVELOPER */}
+</View>
+
 <View style={{
 backgroundColor:"#0f172a",
 padding:16,
@@ -90,7 +89,7 @@ color:"#22c55e",
 fontSize:18,
 marginBottom:6
 }}>
-👨‍💻 Developer
+Developer
 </Text>
 
 <Text style={{color:"#fff"}}>
@@ -98,7 +97,6 @@ Ajithkumar Eswaran
 </Text>
 </View>
 
-{/* GITHUB */}
 <TouchableOpacity
 onPress={openGithub}
 style={{
@@ -106,9 +104,7 @@ backgroundColor:"#2563eb",
 padding:14,
 borderRadius:12
 }}
-
-«»
-
+>
 <Text style={{
 color:"#fff",
 textAlign:"center",
@@ -120,4 +116,4 @@ Open GitHub Repository
 
 </ScrollView>
 )
-  }
+}
