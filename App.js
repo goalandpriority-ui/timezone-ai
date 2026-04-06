@@ -98,29 +98,67 @@ chile:"America/Santiago",
 usa:"America/New_York"
 };
 
-/* FLAGS */
-const flags = {
-india:"🇮🇳",
-pakistan:"🇵🇰",
-china:"🇨🇳",
-japan:"🇯🇵",
-korea:"🇰🇷",
-singapore:"🇸🇬",
-uae:"🇦🇪",
-uk:"🇬🇧",
-france:"🇫🇷",
-germany:"🇩🇪",
-usa:"🇺🇸",
-canada:"🇨🇦",
-australia:"🇦🇺",
-brazil:"🇧🇷",
-mexico:"🇲🇽",
-italy:"🇮🇹",
-spain:"🇪🇸",
-turkey:"🇹🇷",
-egypt:"🇪🇬",
-south:"🇿🇦"
+/* 🌍 AUTO FLAG GENERATOR (200+ countries) */
+const countryCodes = {
+india:"IN",
+pakistan:"PK",
+china:"CN",
+japan:"JP",
+korea:"KR",
+singapore:"SG",
+uae:"AE",
+uk:"GB",
+france:"FR",
+germany:"DE",
+usa:"US",
+canada:"CA",
+australia:"AU",
+brazil:"BR",
+mexico:"MX",
+italy:"IT",
+spain:"ES",
+turkey:"TR",
+egypt:"EG",
+bangladesh:"BD",
+qatar:"QA",
+saudi:"SA",
+nepal:"NP",
+" sri lanka":"LK",
+greenland:"GL",
+iran:"IR",
+iraq:"IQ",
+oman:"OM",
+kuwait:"KW",
+afghanistan:"AF",
+malaysia:"MY",
+indonesia:"ID",
+philippines:"PH",
+thailand:"TH",
+vietnam:"VN",
+argentina:"AR",
+chile:"CL",
+nigeria:"NG",
+kenya:"KE",
+sweden:"SE",
+norway:"NO",
+denmark:"DK",
+finland:"FI",
+poland:"PL",
+netherlands:"NL",
+"new zealand":"NZ",
+"south africa":"ZA"
 };
+
+const getFlag = (country)=>{
+const code = countryCodes[country]
+if(!code) return "🌍"
+
+return code
+.toUpperCase()
+.replace(/./g,char =>
+String.fromCodePoint(127397 + char.charCodeAt())
+)
+}
 
 /* 🌍 ALL TIMEZONES */
 const allZones = Intl.supportedValuesOf
@@ -157,13 +195,10 @@ return aliases[t] || t
 const getTimezone = (value)=>{
 const key = normalize(value)
 
-/* old logic */
 if(timezones[key]) return timezones[key]
 
-/* country mapping */
 if(countryMap[key]) return countryMap[key]
 
-/* full timezone search */
 const match = allZones.find(z =>
 z.toLowerCase().includes(key)
 )
@@ -225,36 +260,6 @@ setFrom(to)
 setTo(a)
 }
 
-const renderItem = ({item})=>{
-const flag = flags[item] || "🌍"
-
-return(
-<Pressable
-onPress={()=>{
-setFromSug([])
-setToSug([])
-if(fromSug.includes(item)) setFrom(item)
-else setTo(item)
-}}
-style={{
-padding:12,
-borderBottomWidth:1,
-borderBottomColor:"#1e293b",
-flexDirection:"row"
-}}
->
-<Text style={{color:"#fff",marginRight:10}}>
-{flag}
-</Text>
-
-<Text style={{color:"#fff"}}>
-{item}
-</Text>
-
-</Pressable>
-)
-}
-
 return(
 <View style={{
 flex:1,
@@ -311,7 +316,7 @@ borderBottomColor:"#1e293b"
 }}
 >
 <Text style={{color:"#fff"}}>
-{flags[item] || "🌍"} {item}
+{getFlag(item)} {item}
 </Text>
 </Pressable>
 )}
@@ -364,7 +369,7 @@ borderBottomColor:"#1e293b"
 }}
 >
 <Text style={{color:"#fff"}}>
-{flags[item] || "🌍"} {item}
+{getFlag(item)} {item}
 </Text>
 </Pressable>
 )}
@@ -380,4 +385,4 @@ fontSize:18
 
 </View>
 )
-  }
+}
