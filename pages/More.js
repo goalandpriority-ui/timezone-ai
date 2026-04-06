@@ -7,6 +7,8 @@ Linking,
 ScrollView
 } from "react-native";
 
+import BannerAd from "../components/BannerAd";
+
 export default function More({dark,setDark}){
 
 const openGithub = ()=>{
@@ -136,7 +138,8 @@ onPress={openGithub}
 style={{
 backgroundColor:"#0f172a",
 padding:16,
-borderRadius:16
+borderRadius:16,
+marginBottom:20
 }}
 >
 <Text style={{
@@ -149,6 +152,9 @@ Open GitHub Repository
 </Text>
 </TouchableOpacity>
 
+{/* BANNER AD */}
+<BannerAd/>
+
 </ScrollView>
 )
-  }
+}
