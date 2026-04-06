@@ -7,7 +7,9 @@
     "userInterfaceStyle": "dark",
     "android": {
       "package": "com.timezone.ai",
-      "versionCode": 1
+      "versionCode": 1,
+      "targetSdkVersion": 34,
+      "minSdkVersion": 23
     },
     "extra": {
       "eas": {
