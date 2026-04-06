@@ -10,6 +10,7 @@ Pressable
 
 import * as Location from "expo-location";
 import BannerAdComponent from "./BannerAd";
+import showInterstitial from "../components/InterstitialAd"
 
 /* AI aliases */
 const aliases = {
@@ -244,6 +245,9 @@ setter(filtered.slice(0,8))
 }
 
 const convert=()=>{
+
+showInterstitial()
+  
 const fromZone=getTimezone(from) || myZone
 const toZone=getTimezone(to)
 
