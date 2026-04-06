@@ -10,72 +10,87 @@ Pressable
 
 const timezones = {
 india: "Asia/Kolkata",
-"new york": "America/New_York",
-"los angeles": "America/Los_Angeles",
-chicago: "America/Chicago",
 london: "Europe/London",
 dubai: "Asia/Dubai",
 tokyo: "Asia/Tokyo",
 sydney: "Australia/Sydney",
-toronto: "America/Toronto",
 paris: "Europe/Paris",
 berlin: "Europe/Berlin",
 singapore: "Asia/Singapore",
 bangkok: "Asia/Bangkok",
 seoul: "Asia/Seoul",
-rome: "Europe/Rome",
-madrid: "Europe/Madrid",
-moscow: "Europe/Moscow",
-beijing: "Asia/Shanghai",
-delhi: "Asia/Kolkata",
-mumbai: "Asia/Kolkata"
+
+"new york": "America/New_York",
+"los angeles": "America/Los_Angeles",
+chicago: "America/Chicago",
+toronto: "America/Toronto"
+};
+
+/* AI aliases */
+const aliases = {
+america: "new york",
+usa: "new york",
+us: "new york",
+uk: "london",
+england: "london",
+uae: "dubai",
+emirates: "dubai",
+japan: "tokyo",
+australia: "sydney",
+france: "paris",
+germany: "berlin"
 };
 
 const cities = Object.keys(timezones);
 
-export default function App() {
+export default function App(){
 
-const [from, setFrom] = useState("");
-const [to, setTo] = useState("");
-const [result, setResult] = useState("");
+const [from,setFrom]=useState("")
+const [to,setTo]=useState("")
+const [result,setResult]=useState("")
 
 const [fromSug,setFromSug]=useState([])
 const [toSug,setToSug]=useState([])
 
-const filterCities = (text,setter)=>{
-const filtered = cities.filter(c =>
-c.includes(text.toLowerCase())
-)
+const normalize = (text)=>{
+const t = text.toLowerCase().trim()
+return aliases[t] || t
+}
+
+const filterCities=(text,setter)=>{
+const t=text.toLowerCase()
+const filtered=cities.filter(c=>c.includes(t))
 setter(filtered.slice(0,5))
 }
 
-const convert = () => {
-const fromKey = from.toLowerCase().trim();
-const toKey = to.toLowerCase().trim();
+const convert=()=>{
 
-if (!timezones[fromKey] || !timezones[toKey]) {
-setResult("City not supported yet");
-return;
+const fromKey=normalize(from)
+const toKey=normalize(to)
+
+if(!timezones[fromKey] || !timezones[toKey]){
+setResult("City not supported yet")
+return
 }
 
-const now = new Date();
+const now=new Date()
 
-const fromTime = now.toLocaleString("en-US", {
-timeZone: timezones[fromKey],
-hour: "2-digit",
-minute: "2-digit"
-});
+const fromTime=now.toLocaleString("en-US",{
+timeZone:timezones[fromKey],
+hour:"2-digit",
+minute:"2-digit"
+})
 
-const toTime = now.toLocaleString("en-US", {
-timeZone: timezones[toKey],
-hour: "2-digit",
-minute: "2-digit"
-});
+const toTime=now.toLocaleString("en-US",{
+timeZone:timezones[toKey],
+hour:"2-digit",
+minute:"2-digit"
+})
 
-setResult(`${from} ${fromTime} → ${to} ${toTime}`);
-};
+setResult(`${fromKey} ${fromTime} → ${toKey} ${toTime}`)
+}
 
-return (
+return(
 <View style={{
 flex:1,
 backgroundColor:"#020617",
@@ -92,9 +107,8 @@ marginBottom:20
 TimeZone AI
 </Text>
 
-{/* FROM */}
 <TextInput
-placeholder="From city"
+placeholder="From city / country"
 placeholderTextColor="#94a3b8"
 value={from}
 onChangeText={(t)=>{
@@ -111,7 +125,6 @@ borderRadius:10
 
 <FlatList
 data={fromSug}
-keyExtractor={(i)=>i}
 renderItem={({item})=>(
 <Pressable
 onPress={()=>{
@@ -120,9 +133,8 @@ setFromSug([])
 }}
 style={{
 padding:10,
-backgroundColor:"#020617",
-borderBottomColor:"#1e293b",
-borderBottomWidth:1
+borderBottomWidth:1,
+borderBottomColor:"#1e293b"
 }}
 >
 <Text style={{color:"#fff"}}>{item}</Text>
@@ -130,10 +142,8 @@ borderBottomWidth:1
 )}
 />
 
-
-{/* TO */}
 <TextInput
-placeholder="To city"
+placeholder="To city / country"
 placeholderTextColor="#94a3b8"
 value={to}
 onChangeText={(t)=>{
@@ -151,7 +161,6 @@ marginTop:10
 
 <FlatList
 data={toSug}
-keyExtractor={(i)=>i}
 renderItem={({item})=>(
 <Pressable
 onPress={()=>{
@@ -160,9 +169,8 @@ setToSug([])
 }}
 style={{
 padding:10,
-backgroundColor:"#020617",
-borderBottomColor:"#1e293b",
-borderBottomWidth:1
+borderBottomWidth:1,
+borderBottomColor:"#1e293b"
 }}
 >
 <Text style={{color:"#fff"}}>{item}</Text>
@@ -197,5 +205,5 @@ fontSize:16
 </Text>
 
 </View>
-);
-               }
+)
+  }
