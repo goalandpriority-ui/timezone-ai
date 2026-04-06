@@ -9,6 +9,8 @@ Pressable,
 ActivityIndicator
 } from "react-native";
 
+import BannerAd from "../components/BannerAd";
+
 /* COUNTRY -> CURRENCY */
 const countryCurrency={
 IN:"INR",
@@ -46,7 +48,7 @@ export default function Currency(){
 const [from,setFrom]=useState("USD")
 const [to,setTo]=useState("INR")
 const [amount,setAmount]=useState("1")
-const [result,setResult]=""
+const [result,setResult]=useState("")
 
 const [rates,setRates]=useState({})
 const [list,setList]=useState([])
@@ -329,6 +331,9 @@ marginTop:5
 
 </View>
 
+{/* BANNER AD */}
+<BannerAd/>
+
 </View>
 )
-  }
+}
