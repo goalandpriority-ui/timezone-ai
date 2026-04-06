@@ -20,7 +20,12 @@ emirates: "dubai",
 japan: "tokyo",
 australia: "sydney",
 france: "paris",
-germany: "berlin"
+germany: "berlin",
+pakistan: "asia/karachi",
+china: "asia/shanghai",
+greenland: "america/godthab",
+nepal: "asia/kathmandu",
+srilanka: "asia/colombo"
 };
 
 /* COMMON CITIES (your old list intact) */
@@ -42,6 +47,81 @@ chicago: "America/Chicago",
 toronto: "America/Toronto"
 };
 
+/* 🌍 COUNTRY → TIMEZONE MAP */
+const countryMap = {
+pakistan:"Asia/Karachi",
+china:"Asia/Shanghai",
+greenland:"America/Godthab",
+india:"Asia/Kolkata",
+nepal:"Asia/Kathmandu",
+sri lanka:"Asia/Colombo",
+uae:"Asia/Dubai",
+saudi:"Asia/Riyadh",
+qatar:"Asia/Qatar",
+kuwait:"Asia/Kuwait",
+oman:"Asia/Muscat",
+iran:"Asia/Tehran",
+iraq:"Asia/Baghdad",
+afghanistan:"Asia/Kabul",
+bangladesh:"Asia/Dhaka",
+thailand:"Asia/Bangkok",
+vietnam:"Asia/Ho_Chi_Minh",
+malaysia:"Asia/Kuala_Lumpur",
+indonesia:"Asia/Jakarta",
+philippines:"Asia/Manila",
+japan:"Asia/Tokyo",
+korea:"Asia/Seoul",
+singapore:"Asia/Singapore",
+australia:"Australia/Sydney",
+new zealand:"Pacific/Auckland",
+uk:"Europe/London",
+france:"Europe/Paris",
+germany:"Europe/Berlin",
+spain:"Europe/Madrid",
+italy:"Europe/Rome",
+netherlands:"Europe/Amsterdam",
+sweden:"Europe/Stockholm",
+norway:"Europe/Oslo",
+denmark:"Europe/Copenhagen",
+finland:"Europe/Helsinki",
+poland:"Europe/Warsaw",
+turkey:"Europe/Istanbul",
+egypt:"Africa/Cairo",
+kenya:"Africa/Nairobi",
+nigeria:"Africa/Lagos",
+south africa:"Africa/Johannesburg",
+canada:"America/Toronto",
+mexico:"America/Mexico_City",
+brazil:"America/Sao_Paulo",
+argentina:"America/Argentina/Buenos_Aires",
+chile:"America/Santiago",
+usa:"America/New_York"
+};
+
+/* FLAGS */
+const flags = {
+india:"🇮🇳",
+pakistan:"🇵🇰",
+china:"🇨🇳",
+japan:"🇯🇵",
+korea:"🇰🇷",
+singapore:"🇸🇬",
+uae:"🇦🇪",
+uk:"🇬🇧",
+france:"🇫🇷",
+germany:"🇩🇪",
+usa:"🇺🇸",
+canada:"🇨🇦",
+australia:"🇦🇺",
+brazil:"🇧🇷",
+mexico:"🇲🇽",
+italy:"🇮🇹",
+spain:"🇪🇸",
+turkey:"🇹🇷",
+egypt:"🇪🇬",
+south:"🇿🇦"
+};
+
 /* 🌍 ALL TIMEZONES */
 const allZones = Intl.supportedValuesOf
 ? Intl.supportedValuesOf("timeZone")
@@ -49,6 +129,7 @@ const allZones = Intl.supportedValuesOf
 
 const cities = [
 ...Object.keys(timezones),
+...Object.keys(countryMap),
 ...allZones.map(z => z.toLowerCase())
 ];
 
@@ -76,8 +157,13 @@ return aliases[t] || t
 const getTimezone = (value)=>{
 const key = normalize(value)
 
+/* old logic */
 if(timezones[key]) return timezones[key]
 
+/* country mapping */
+if(countryMap[key]) return countryMap[key]
+
+/* full timezone search */
 const match = allZones.find(z =>
 z.toLowerCase().includes(key)
 )
@@ -139,6 +225,36 @@ setFrom(to)
 setTo(a)
 }
 
+const renderItem = ({item})=>{
+const flag = flags[item] || "🌍"
+
+return(
+<Pressable
+onPress={()=>{
+setFromSug([])
+setToSug([])
+if(fromSug.includes(item)) setFrom(item)
+else setTo(item)
+}}
+style={{
+padding:12,
+borderBottomWidth:1,
+borderBottomColor:"#1e293b",
+flexDirection:"row"
+}}
+>
+<Text style={{color:"#fff",marginRight:10}}>
+{flag}
+</Text>
+
+<Text style={{color:"#fff"}}>
+{item}
+</Text>
+
+</Pressable>
+)
+}
+
 return(
 <View style={{
 flex:1,
@@ -194,7 +310,9 @@ borderBottomWidth:1,
 borderBottomColor:"#1e293b"
 }}
 >
-<Text style={{color:"#fff"}}>{item}</Text>
+<Text style={{color:"#fff"}}>
+{flags[item] || "🌍"} {item}
+</Text>
 </Pressable>
 )}
 />
@@ -203,7 +321,7 @@ borderBottomColor:"#1e293b"
 onPress={swap}
 style={{
 backgroundColor:"#1e293b",
-padding:10,
+padding:12,
 borderRadius:10,
 marginTop:10,
 marginBottom:10
@@ -245,7 +363,9 @@ borderBottomWidth:1,
 borderBottomColor:"#1e293b"
 }}
 >
-<Text style={{color:"#fff"}}>{item}</Text>
+<Text style={{color:"#fff"}}>
+{flags[item] || "🌍"} {item}
+</Text>
 </Pressable>
 )}
 />
