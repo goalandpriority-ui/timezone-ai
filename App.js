@@ -28,7 +28,7 @@ nepal: "asia/kathmandu",
 srilanka: "asia/colombo"
 };
 
-/* COMMON CITIES (your old list intact) */
+/* COMMON CITIES */
 const timezones = {
 india: "Asia/Kolkata",
 london: "Europe/London",
@@ -47,7 +47,7 @@ chicago: "America/Chicago",
 toronto: "America/Toronto"
 };
 
-/* 🌍 COUNTRY → TIMEZONE MAP */
+/* COUNTRY MAP */
 const countryMap = {
 pakistan:"Asia/Karachi",
 china:"Asia/Shanghai",
@@ -98,32 +98,27 @@ chile:"America/Santiago",
 usa:"America/New_York"
 };
 
-/* 🌍 AUTO FLAG GENERATOR (200+ countries) */
+/* FLAGS */
 const countryCodes = {
 india:"IN",
 pakistan:"PK",
 china:"CN",
-japan:"JP",
-korea:"KR",
-singapore:"SG",
-uae:"AE",
-uk:"GB",
-france:"FR",
-germany:"DE",
 usa:"US",
-canada:"CA",
+uk:"GB",
+uae:"AE",
+japan:"JP",
 australia:"AU",
+canada:"CA",
 brazil:"BR",
 mexico:"MX",
 italy:"IT",
 spain:"ES",
 turkey:"TR",
-egypt:"EG",
 bangladesh:"BD",
 qatar:"QA",
 saudi:"SA",
 nepal:"NP",
-" sri lanka":"LK",
+"sri lanka":"LK",
 greenland:"GL",
 iran:"IR",
 iraq:"IQ",
@@ -152,7 +147,6 @@ netherlands:"NL",
 const getFlag = (country)=>{
 const code = countryCodes[country]
 if(!code) return "🌍"
-
 return code
 .toUpperCase()
 .replace(/./g,char =>
@@ -160,7 +154,7 @@ String.fromCodePoint(127397 + char.charCodeAt())
 )
 }
 
-/* 🌍 ALL TIMEZONES */
+/* ALL TIMEZONES */
 const allZones = Intl.supportedValuesOf
 ? Intl.supportedValuesOf("timeZone")
 : [];
@@ -178,10 +172,12 @@ const [to,setTo]=useState("")
 const [result,setResult]=useState("")
 const [myZone,setMyZone]=useState("")
 
+const [favorites,setFavorites]=useState([])
+
 const [fromSug,setFromSug]=useState([])
 const [toSug,setToSug]=useState([])
 
-/* AUTO DETECT USER TIMEZONE */
+/* AUTO DETECT */
 useEffect(()=>{
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone
 setMyZone(zone)
@@ -196,7 +192,6 @@ const getTimezone = (value)=>{
 const key = normalize(value)
 
 if(timezones[key]) return timezones[key]
-
 if(countryMap[key]) return countryMap[key]
 
 const match = allZones.find(z =>
@@ -260,12 +255,22 @@ setFrom(to)
 setTo(a)
 }
 
+/* FAVORITES */
+const addFavorite=(item)=>{
+if(!favorites.includes(item)){
+setFavorites([item,...favorites])
+}
+}
+
+const removeFavorite=(item)=>{
+setFavorites(favorites.filter(f=>f!==item))
+}
+
 return(
 <View style={{
 flex:1,
 backgroundColor:"#020617",
-padding:20,
-justifyContent:"center"
+padding:20
 }}>
 
 <Text style={{
@@ -279,10 +284,41 @@ TimeZone AI
 
 <Text style={{
 color:"#94a3b8",
-marginBottom:15
+marginBottom:10
 }}>
 Your Timezone: {myZone}
 </Text>
+
+{/* FAVORITES */}
+{favorites.length>0 && (
+<View style={{marginBottom:10}}>
+<Text style={{color:"#22c55e",marginBottom:5}}>
+⭐ Favorites
+</Text>
+
+<FlatList
+horizontal
+data={favorites}
+keyExtractor={(i)=>i}
+renderItem={({item})=>(
+<Pressable
+onPress={()=>setFrom(item)}
+onLongPress={()=>removeFavorite(item)}
+style={{
+backgroundColor:"#0f172a",
+padding:10,
+borderRadius:10,
+marginRight:8
+}}
+>
+<Text style={{color:"#fff"}}>
+{getFlag(item)} {item}
+</Text>
+</Pressable>
+)}
+/>
+</View>
+)}
 
 <TextInput
 placeholder="From city / country"
@@ -307,6 +343,7 @@ renderItem={({item})=>(
 <Pressable
 onPress={()=>{
 setFrom(item)
+addFavorite(item)
 setFromSug([])
 }}
 style={{
@@ -360,6 +397,7 @@ renderItem={({item})=>(
 <Pressable
 onPress={()=>{
 setTo(item)
+addFavorite(item)
 setToSug([])
 }}
 style={{
@@ -385,4 +423,4 @@ fontSize:18
 
 </View>
 )
-}
+  }
