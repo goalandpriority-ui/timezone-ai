@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
+
     "android": {
       "package": "com.timezone.ai",
       "versionCode": 1,
@@ -15,9 +16,17 @@
         "ACCESS_COARSE_LOCATION"
       ]
     },
+
     "plugins": [
-      "expo-location"
+      "expo-location",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-1202355754527023~2027878671"
+        }
+      ]
     ],
+
     "extra": {
       "eas": {
         "projectId": "8eebc72f-263a-498b-9526-ab6b64d328da"
