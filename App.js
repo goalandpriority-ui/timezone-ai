@@ -5,8 +5,11 @@ Text,
 TextInput,
 TouchableOpacity,
 FlatList,
-Pressable
+Pressable,
+Share
 } from "react-native";
+
+import * as Location from "expo-location";
 
 /* AI aliases */
 const aliases = {
@@ -164,23 +167,58 @@ const cities = [
 ...Object.keys(countryMap),
 ...allZones.map(z => z.toLowerCase())
 ];
-
 export default function App(){
 
 const [from,setFrom]=useState("")
 const [to,setTo]=useState("")
 const [result,setResult]=useState("")
 const [myZone,setMyZone]=useState("")
-
 const [favorites,setFavorites]=useState([])
 
 const [fromSug,setFromSug]=useState([])
 const [toSug,setToSug]=useState([])
 
-/* AUTO DETECT */
+/* NEW STATES (ADDED ONLY) */
+const [pinned,setPinned]=useState([])
+const [city,setCity]=useState("")
+const [country,setCountry]=useState("")
+
+/* MEETING STATES */
+const [meetingTime,setMeetingTime]=useState("09:00")
+const [workStart,setWorkStart]=useState(9)
+const [workEnd,setWorkEnd]=useState(18)
+const [bestTime,setBestTime]=useState("")
+
+/* AUTO DETECT TIMEZONE */
 useEffect(()=>{
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone
 setMyZone(zone)
+},[])
+
+/* AUTO CITY DETECT */
+useEffect(()=>{
+
+const detect=async()=>{
+
+try{
+
+const {status}=await Location.requestForegroundPermissionsAsync()
+if(status!=="granted") return
+
+const loc=await Location.getCurrentPositionAsync({})
+const geo=await Location.reverseGeocodeAsync(loc.coords)
+
+if(geo.length>0){
+setCity(geo[0].city || "")
+setCountry(geo[0].country || "")
+}
+
+}catch(e){}
+
+}
+
+detect()
+
 },[])
 
 const normalize = (text)=>{
@@ -203,17 +241,11 @@ return match
 
 const filterCities=(text,setter)=>{
 const t=text.toLowerCase()
-
-const filtered=cities.filter(c =>
-c.includes(t)
-)
-
+const filtered=cities.filter(c => c.includes(t))
 setter(filtered.slice(0,8))
-}
-
+  }
 /* CONVERT */
 const convert=()=>{
-
 const fromZone=getTimezone(from) || myZone
 const toZone=getTimezone(to)
 
@@ -248,6 +280,125 @@ const i=setInterval(convert,1000)
 return ()=>clearInterval(i)
 },[from,to,myZone])
 
+/* MULTI CLOCK */
+const getClockTime=(zone)=>{
+return new Date().toLocaleString("en-US",{
+timeZone:zone,
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+})
+}
+
+/* MEETING TIME */
+const getMeetingTime=(zone)=>{
+const [h,m]=meetingTime.split(":")
+const base=new Date()
+
+base.setHours(parseInt(h))
+base.setMinutes(parseInt(m))
+base.setSeconds(0)
+
+return new Date(
+base.toLocaleString("en-US",{timeZone:zone})
+)
+}
+
+/* TIME DIFFERENCE */
+const getTimeDiff=(zone)=>{
+const local=new Date()
+const target=new Date(
+local.toLocaleString("en-US",{timeZone:zone})
+)
+
+const diff=(target-local)/3600000
+return diff.toFixed(1)+"h"
+}
+
+/* PIN CLOCK */
+const pinClock=(item)=>{
+if(!pinned.includes(item)){
+setPinned([item,...pinned])
+}
+}
+
+const unpinClock=(item)=>{
+setPinned(pinned.filter(p=>p!==item))
+}
+
+/* QUICK ADD */
+const quickAdd=(item)=>{
+addFavorite(item)
+pinClock(item)
+}
+
+/* WORK HOURS */
+const inWorkHours=(date)=>{
+const h=date.getHours()
+return h>=workStart && h<=workEnd
+}
+
+/* BEST MEETING AI */
+const findBestMeeting=()=>{
+
+if(favorites.length===0) return
+
+for(let h=0;h<24;h++){
+
+let ok=true
+
+for(const f of favorites){
+
+const zone=getTimezone(f)
+if(!zone) continue
+
+const d=new Date()
+d.setHours(h)
+d.setMinutes(0)
+
+const z=new Date(
+d.toLocaleString("en-US",{timeZone:zone})
+)
+
+if(!inWorkHours(z)){
+ok=false
+break
+}
+
+}
+
+if(ok){
+setBestTime(`${h.toString().padStart(2,"0")}:00`)
+return
+}
+
+}
+
+setBestTime("No overlap")
+}
+
+useEffect(()=>{
+findBestMeeting()
+},[favorites])
+
+/* SHARE */
+const shareMeeting=async()=>{
+let text="Meeting Time:\n"
+
+favorites.forEach(f=>{
+const zone=getTimezone(f)
+if(!zone) return
+
+const t=getMeetingTime(zone)
+
+text+=`${f} - ${t.toLocaleTimeString()}\n`
+})
+
+await Share.share({
+message:text
+})
+}
+
 /* SWAP */
 const swap=()=>{
 const a=from
@@ -264,37 +415,93 @@ setFavorites([item,...favorites])
 
 const removeFavorite=(item)=>{
 setFavorites(favorites.filter(f=>f!==item))
-}
-
+  }
 return(
-<View style={{
-flex:1,
-backgroundColor:"#020617",
-padding:20
-}}>
+<View style={{flex:1,backgroundColor:"#020617",padding:20}}>
 
-<Text style={{
-color:"#fff",
-fontSize:26,
-fontWeight:"bold",
-marginBottom:5
-}}>
+<Text style={{color:"#fff",fontSize:26,fontWeight:"bold"}}>
 TimeZone AI
 </Text>
 
-<Text style={{
-color:"#94a3b8",
-marginBottom:10
-}}>
+{/* CITY DETECT */}
+{city!=="" && (
+<Text style={{color:"#22c55e",marginBottom:5}}>
+📍 {city}, {country}
+</Text>
+)}
+
+<Text style={{color:"#94a3b8",marginBottom:10}}>
 Your Timezone: {myZone}
 </Text>
 
+{/* QUICK ADD */}
+<View style={{
+flexDirection:"row",
+flexWrap:"wrap",
+marginBottom:10
+}}>
+
+{["india","usa","uk","dubai","japan","australia"].map(q=>(
+<TouchableOpacity
+key={q}
+onPress={()=>quickAdd(q)}
+style={{
+backgroundColor:"#1e293b",
+paddingHorizontal:12,
+paddingVertical:6,
+borderRadius:20,
+marginRight:6,
+marginBottom:6
+}}>
+<Text style={{color:"#fff"}}>
+{getFlag(q)} {q}
+</Text>
+</TouchableOpacity>
+))}
+
+</View>
+
+{/* PINNED CLOCKS */}
+{pinned.length>0 && (
+<View style={{marginBottom:10}}>
+<Text style={{color:"#22c55e"}}>
+📌 Pinned Clocks
+</Text>
+
+{pinned.map(item=>{
+const zone=getTimezone(item)
+if(!zone) return null
+
+return(
+<Pressable
+key={"pin-"+item}
+onLongPress={()=>unpinClock(item)}
+style={{
+flexDirection:"row",
+justifyContent:"space-between",
+backgroundColor:"#020617",
+padding:10,
+borderRadius:10,
+marginTop:5
+}}>
+<Text style={{color:"#fff"}}>
+{getFlag(item)} {item}
+</Text>
+
+<Text style={{color:"#22c55e"}}>
+{getClockTime(zone)}
+</Text>
+
+</Pressable>
+)
+})}
+
+</View>
+)}
 {/* FAVORITES */}
 {favorites.length>0 && (
 <View style={{marginBottom:10}}>
-<Text style={{color:"#22c55e",marginBottom:5}}>
-⭐ Favorites
-</Text>
+<Text style={{color:"#22c55e"}}>⭐ Favorites</Text>
 
 <FlatList
 horizontal
@@ -309,8 +516,7 @@ backgroundColor:"#0f172a",
 padding:10,
 borderRadius:10,
 marginRight:8
-}}
->
+}}>
 <Text style={{color:"#fff"}}>
 {getFlag(item)} {item}
 </Text>
@@ -320,6 +526,118 @@ marginRight:8
 </View>
 )}
 
+{/* WORLD CLOCK */}
+{favorites.length>0 && (
+<View style={{marginBottom:10}}>
+<Text style={{color:"#22c55e"}}>🕓 World Clock</Text>
+
+{favorites.map(item=>{
+const zone=getTimezone(item)
+if(!zone) return null
+
+return(
+<Pressable
+key={item}
+onLongPress={()=>pinClock(item)}
+style={{
+flexDirection:"row",
+justifyContent:"space-between",
+backgroundColor:"#0f172a",
+padding:10,
+borderRadius:10,
+marginTop:5
+}}>
+<Text style={{color:"#fff"}}>
+{getFlag(item)} {item}
+</Text>
+
+<Text style={{color:"#22c55e"}}>
+{getClockTime(zone)}
+</Text>
+</Pressable>
+)
+})}
+
+</View>
+)}
+
+{/* MEETING PLANNER */}
+{favorites.length>0 && (
+<View style={{marginBottom:15}}>
+
+<Text style={{color:"#22c55e"}}>
+📅 Meeting Planner
+</Text>
+
+<TextInput
+value={meetingTime}
+onChangeText={setMeetingTime}
+placeholder="09:00"
+placeholderTextColor="#94a3b8"
+style={{
+backgroundColor:"#0f172a",
+color:"#fff",
+padding:12,
+borderRadius:10,
+marginTop:5
+}}
+/>
+
+<Text style={{
+color:"#94a3b8",
+marginTop:5
+}}>
+🤖 Best: {bestTime}
+</Text>
+
+<TouchableOpacity
+onPress={shareMeeting}
+style={{
+backgroundColor:"#2563eb",
+padding:10,
+borderRadius:10,
+marginTop:5
+}}>
+<Text style={{color:"#fff",textAlign:"center"}}>
+📤 Share Meeting
+</Text>
+</TouchableOpacity>
+
+{favorites.map(item=>{
+const zone=getTimezone(item)
+if(!zone) return null
+
+const t=getMeetingTime(zone)
+
+return(
+<View
+key={"meet-"+item}
+style={{
+flexDirection:"row",
+justifyContent:"space-between",
+backgroundColor:"#020617",
+padding:10,
+borderRadius:10,
+marginTop:5
+}}>
+<Text style={{color:"#fff"}}>
+{getFlag(item)} {item}
+</Text>
+
+<Text style={{color:"#22c55e"}}>
+{t.toLocaleTimeString()}
+</Text>
+
+<Text style={{color:"#94a3b8"}}>
+{getTimeDiff(zone)}
+</Text>
+
+</View>
+)
+})}
+
+</View>
+)}
 <TextInput
 placeholder="From city / country"
 placeholderTextColor="#94a3b8"
@@ -350,8 +668,7 @@ style={{
 padding:10,
 borderBottomWidth:1,
 borderBottomColor:"#1e293b"
-}}
->
+}}>
 <Text style={{color:"#fff"}}>
 {getFlag(item)} {item}
 </Text>
@@ -367,8 +684,7 @@ padding:12,
 borderRadius:10,
 marginTop:10,
 marginBottom:10
-}}
->
+}}>
 <Text style={{color:"#fff",textAlign:"center"}}>
 🔁 Swap
 </Text>
@@ -404,8 +720,7 @@ style={{
 padding:10,
 borderBottomWidth:1,
 borderBottomColor:"#1e293b"
-}}
->
+}}>
 <Text style={{color:"#fff"}}>
 {getFlag(item)} {item}
 </Text>
@@ -423,4 +738,4 @@ fontSize:18
 
 </View>
 )
-  }
+}
