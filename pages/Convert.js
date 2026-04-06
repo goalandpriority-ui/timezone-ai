@@ -8,6 +8,8 @@ FlatList,
 Pressable
 } from "react-native";
 
+import * as Location from "expo-location";
+
 /* AI aliases */
 const aliases = {
 america: "new york",
@@ -172,13 +174,63 @@ const [to,setTo]=useState("")
 const [result,setResult]=useState("")
 const [myZone,setMyZone]=useState("")
 
+const [city,setCity]=useState("")
+const [country,setCountry]=useState("")
+const [liveTime,setLiveTime]=useState("")
+
 const [fromSug,setFromSug]=useState([])
 const [toSug,setToSug]=useState([])
 
-/* AUTO DETECT */
+/* AUTO DETECT TIMEZONE */
 useEffect(()=>{
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone
 setMyZone(zone)
+},[])
+
+/* LOCATION DETECT */
+useEffect(()=>{
+
+const detect=async()=>{
+
+try{
+const {status}=await Location.requestForegroundPermissionsAsync()
+if(status!=="granted") return
+
+const loc=await Location.getCurrentPositionAsync({})
+const geo=await Location.reverseGeocodeAsync(loc.coords)
+
+if(geo.length>0){
+setCity(geo[0].city || "")
+setCountry(geo[0].country || "")
+}
+
+}catch(e){}
+
+}
+
+detect()
+
+},[])
+
+/* LIVE CLOCK */
+useEffect(()=>{
+
+const update=()=>{
+const now=new Date()
+
+const t=now.toLocaleTimeString("en-US",{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+})
+
+setLiveTime(t)
+}
+
+update()
+const i=setInterval(update,1000)
+return ()=>clearInterval(i)
+
 },[])
 
 const normalize = (text)=>{
@@ -232,7 +284,7 @@ minute:"2-digit",
 second:"2-digit"
 })
 
-setResult("${from} ${fromTime} → ${to} ${toTime}")
+setResult(`${from} ${fromTime} → ${to} ${toTime}`)
 }
 
 /* LIVE */
@@ -255,10 +307,19 @@ return(
 <Text style={{
 color:"#fff",
 fontSize:26,
-fontWeight:"bold",
-marginBottom:5
+fontWeight:"bold"
 }}>
 TimeZone AI
+</Text>
+
+{city!=="" && (
+<Text style={{color:"#22c55e",marginTop:4}}>
+📍 {city}, {country}
+</Text>
+)}
+
+<Text style={{color:"#22c55e"}}>
+🕓 {liveTime}
 </Text>
 
 <Text style={{
@@ -370,4 +431,4 @@ fontSize:18
 
 </View>
 )
-             }
+  }
